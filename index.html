@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>💧 Smart Water Allocation AI — Project Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#020810;
+  --bg2:#040d1a;
+  --surface:rgba(255,255,255,0.03);
+  --surface2:rgba(255,255,255,0.055);
+  --border:rgba(0,180,255,0.10);
+  --border2:rgba(0,180,255,0.18);
+  --blue:#00B4D8;
+  --teal:#00F5C4;
+  --indigo:#4F8EF7;
+  --orange:#FF6B35;
+  --text:rgba(255,255,255,0.90);
+  --muted:rgba(255,255,255,0.45);
+  --dim:rgba(255,255,255,0.22);
+  --display:'Syne',sans-serif;
+  --body:'Inter',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:8px;
+  --r2:14px;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  font-size:15px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px}
+
+/* ══════════════════════════════
+   NAV
+══════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:54px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1.5rem,5vw,5rem);
+  background:rgba(2,8,16,0.75);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;
+  color:var(--blue);text-transform:uppercase;
+}
+.nav-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--blue);
+  box-shadow:0 0 8px var(--blue);
+  animation:pulse 2.5s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.nav-links{
+  display:flex;gap:4px;list-style:none;
+}
+.nav-links a{
+  font-size:12px;font-weight:500;color:var(--muted);
+  text-decoration:none;padding:5px 13px;border-radius:20px;
+  transition:all .2s;
+}
+.nav-links a:hover{color:var(--text);background:var(--surface2)}
+
+/* ══════════════════════════════
+   HERO
+══════════════════════════════ */
+.hero{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 480px;
+  align-items:center;
+  gap:4rem;
+  padding:6rem clamp(1.5rem,5vw,5rem) 5rem;
+  position:relative;overflow:hidden;
+}
+/* animated grid bg */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,180,216,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,180,216,.04) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent);
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 55% at 75% 45%,rgba(0,180,216,.09) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 60% at 5% 80%,rgba(0,245,196,.05) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero-left{position:relative;z-index:1}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  color:var(--blue);letter-spacing:.16em;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:1.6rem;
+}
+.eyebrow::before{
+  content:'';display:block;width:28px;height:1px;background:var(--blue);
+}
+.hero h1{
+  font-family:var(--display);
+  font-size:clamp(3rem,5.5vw,4.8rem);
+  font-weight:800;line-height:1.04;letter-spacing:-.03em;
+  margin-bottom:1.8rem;
+}
+.hero h1 .hl{
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-desc{
+  font-size:16px;color:var(--muted);line-height:1.7;
+  max-width:520px;margin-bottom:2.8rem;
+}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:3.5rem}
+.pill{
+  font-size:11.5px;font-weight:500;font-family:var(--mono);
+  padding:5px 14px;border-radius:20px;
+  border:1px solid var(--border);color:var(--muted);
+  transition:all .2s;
+}
+.pill.blue{border-color:rgba(0,180,216,.4);color:var(--blue);background:rgba(0,180,216,.06)}
+.pill.teal{border-color:rgba(0,245,196,.35);color:var(--teal);background:rgba(0,245,196,.05)}
+.pill.indigo{border-color:rgba(79,142,247,.35);color:var(--indigo);background:rgba(79,142,247,.05)}
+.pill.orange{border-color:rgba(255,107,53,.35);color:var(--orange);background:rgba(255,107,53,.05)}
+.hero-stats{
+  display:flex;gap:2.5rem;
+  padding-top:2.5rem;
+  border-top:1px solid var(--border);
+}
+.stat .num{
+  font-family:var(--display);font-size:2.2rem;font-weight:800;
+  color:var(--blue);line-height:1;
+}
+.stat .lbl{font-size:11.5px;color:var(--dim);margin-top:4px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em}
+
+/* ── HERO RIGHT — flow diagram ── */
+.hero-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;gap:0;
+  padding:2rem;
+}
+.flow-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:1rem 1.4rem;
+  position:relative;
+  transition:border-color .25s,background .25s;
+}
+.flow-card:hover{border-color:var(--border2);background:var(--surface2)}
+.flow-arrow{
+  width:2px;height:22px;
+  background:linear-gradient(to bottom,var(--blue),transparent);
+  margin:0 auto;
+}
+.flow-label{
+  font-family:var(--mono);font-size:10px;color:var(--blue);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;
+}
+.flow-title{font-family:var(--display);font-size:.95rem;font-weight:700}
+.flow-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.flow-badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.fb{
+  font-family:var(--mono);font-size:10px;
+  padding:2px 8px;border-radius:4px;
+  background:rgba(0,180,216,.1);color:var(--blue);
+  border:1px solid rgba(0,180,216,.18);
+}
+.fb.t{background:rgba(0,245,196,.08);color:var(--teal);border-color:rgba(0,245,196,.18)}
+.fb.i{background:rgba(79,142,247,.08);color:var(--indigo);border-color:rgba(79,142,247,.18)}
+.fb.o{background:rgba(255,107,53,.08);color:var(--orange);border-color:rgba(255,107,53,.18)}
+
+/* ══════════════════════════════
+   SECTIONS
+══════════════════════════════ */
+section{
+  padding:clamp(4.5rem,8vh,7rem) clamp(1.5rem,5vw,5rem);
+  border-top:1px solid var(--border);
+  position:relative;
+}
+.sec-label{
+  font-family:var(--mono);font-size:10.5px;font-weight:500;
+  color:var(--blue);letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:1rem;display:flex;align-items:center;gap:10px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border);max-width:60px}
+.sec-title{
+  font-family:var(--display);
+  font-size:clamp(1.8rem,3.5vw,2.8rem);
+  font-weight:800;letter-spacing:-.025em;line-height:1.1;
+  margin-bottom:.7rem;
+}
+.sec-sub{color:var(--muted);font-size:15px;max-width:580px;margin-bottom:3rem;line-height:1.65}
+
+/* ══════════════════════════════
+   PROBLEM — two-col layout
+══════════════════════════════ */
+.problem-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  overflow:hidden;
+  margin-bottom:1.5rem;
+}
+.p-card{background:var(--bg2);padding:1.8rem 2rem;transition:background .2s}
+.p-card:hover{background:rgba(0,180,216,.035)}
+.p-tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--blue);
+  border:1px solid rgba(0,180,216,.25);border-radius:20px;
+  padding:3px 10px;display:inline-block;margin-bottom:1rem;
+}
+.p-tag.teal{color:var(--teal);border-color:rgba(0,245,196,.25)}
+.p-tag.orange{color:var(--orange);border-color:rgba(255,107,53,.25)}
+.p-card h3{font-family:var(--display);font-size:1.05rem;font-weight:700;margin-bottom:.6rem}
+.p-card ul{list-style:none;display:flex;flex-direction:column;gap:.35rem}
+.p-card li{font-size:13.5px;color:var(--muted);padding-left:1.2rem;position:relative}
+.p-card li::before{content:'▸';position:absolute;left:0;color:var(--blue);font-size:10px;top:3px}
+
+/* problem table */
+.p-table{width:100%;border-collapse:collapse}
+.p-table th{
+  font-family:var(--mono);font-size:11px;color:var(--dim);
+  text-align:left;padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  text-transform:uppercase;letter-spacing:.07em;
+}
+.p-table td{font-size:13.5px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.p-table tr:hover td{background:rgba(0,180,216,.03)}
+.badge{
+  font-family:var(--mono);font-size:10.5px;
+  padding:3px 10px;border-radius:20px;white-space:nowrap;
+}
+.b-crit{background:rgba(255,60,60,.12);color:#ff5555;border:1px solid rgba(255,60,60,.2)}
+.b-high{background:rgba(255,107,53,.12);color:var(--orange);border:1px solid rgba(255,107,53,.2)}
+.b-med{background:rgba(255,180,0,.1);color:#ffb300;border:1px solid rgba(255,180,0,.2)}
+
+/* ══════════════════════════════
+   LITERATURE
+══════════════════════════════ */
+.paper-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.2rem}
+.paper{
+  border:1px solid var(--border);border-radius:var(--r2);
+  padding:1.8rem;background:var(--bg2);
+  transition:border-color .2s,transform .2s;
+  position:relative;overflow:hidden;
+}
+.paper::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--blue),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.paper:hover{border-color:var(--border2);transform:translateY(-2px)}
+.paper:hover::before{opacity:1}
+.paper-num{
+  font-family:var(--mono);font-size:10px;color:var(--blue);
+  letter-spacing:.1em;margin-bottom:1rem;
+  display:flex;align-items:center;gap:8px;
+}
+.paper-num::after{content:'';flex:1;height:1px;background:var(--border)}
+.paper h3{font-family:var(--display);font-size:1rem;font-weight:700;margin-bottom:.35rem;line-height:1.3}
+.paper .meta{font-size:12px;color:var(--dim);font-family:var(--mono);margin-bottom:1rem}
+.paper ul{list-style:none;display:flex;flex-direction:column;gap:.3rem;margin-bottom:1rem}
+.paper li{font-size:13px;color:var(--muted)}
+.paper li::before{content:'+ ';color:var(--teal);font-weight:700}
+.paper .limit{
+  font-size:12.5px;color:var(--dim);
+  padding-top:.9rem;border-top:1px solid var(--border);
+}
+.paper .limit strong{color:rgba(255,107,53,.8)}
+
+/* ══════════════════════════════
+   GAPS
+══════════════════════════════ */
+.gap-table{width:100%;border-collapse:collapse}
+.gap-table th{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:left;padding:10px 16px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.07em}
+.gap-table td{font-size:13.5px;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.gap-table tr:hover td{background:rgba(0,180,216,.03)}
+.gap-num{font-family:var(--mono);font-size:11px;color:var(--blue);white-space:nowrap}
+
+/* ══════════════════════════════
+   NOVELTY
+══════════════════════════════ */
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2.5rem}
+.vs-box{border:1px solid var(--border);border-radius:var(--r2);padding:2rem}
+.vs-box.bad{border-color:rgba(255,80,80,.2);background:rgba(255,80,80,.03)}
+.vs-box.good{border-color:rgba(0,245,196,.2);background:rgba(0,245,196,.03)}
+.vs-head{font-family:var(--display);font-size:1rem;font-weight:700;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem}
+.vs-box.bad .vs-head{color:#ff6060}
+.vs-box.good .vs-head{color:var(--teal)}
+.vs-list{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.vs-list li{font-size:13.5px;color:var(--muted);line-height:1.5}
+.vs-box.bad .vs-list li::before{content:'✗ ';color:#ff5555;font-weight:700}
+.vs-box.good .vs-list li::before{content:'✓ ';color:var(--teal);font-weight:700}
+.contrib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.contrib{
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:1.4rem 1.6rem;background:var(--bg2);
+  transition:border-color .2s;
+}
+.contrib:hover{border-color:var(--border2)}
+.contrib-icon{font-size:1.5rem;margin-bottom:.8rem}
+.contrib h4{font-family:var(--display);font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.contrib p{font-size:13px;color:var(--muted);line-height:1.55}
+
+/* ══════════════════════════════
+   DATASETS
+══════════════════════════════ */
+.ds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.2rem}
+.ds{
+  border:1px solid var(--border);border-radius:var(--r2);
+  padding:1.7rem;background:var(--bg2);
+  position:relative;overflow:hidden;
+  transition:border-color .2s;
+}
+.ds:hover{border-color:var(--border2)}
+.ds-bg{
+  position:absolute;top:-10px;right:-10px;
+  font-size:5rem;opacity:.04;line-height:1;
+  pointer-events:none;
+}
+.ds-id{
+  font-family:var(--mono);font-size:10px;color:var(--blue);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:.9rem;
+}
+.ds h3{font-family:var(--display);font-size:1rem;font-weight:700;margin-bottom:.3rem}
+.ds-source{font-size:11.5px;color:var(--indigo);font-family:var(--mono);margin-bottom:1rem}
+.ds-feats{list-style:none;display:flex;flex-direction:column;gap:.3rem}
+.ds-feats li{font-size:13px;color:var(--muted)}
+.ds-feats li::before{content:'· ';color:var(--teal);font-weight:700}
+.ds-purpose{
+  margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--border);
+  font-size:12.5px;color:var(--dim);
+}
+
+/* ══════════════════════════════
+   METHODOLOGY
+══════════════════════════════ */
+.method-steps{display:flex;flex-direction:column;gap:0}
+.mstep{
+  display:grid;grid-template-columns:72px 1fr;
+  padding:2rem 0;border-bottom:1px solid var(--border);
+  gap:1.5rem;align-items:start;
+  transition:background .2s;
+}
+.mstep:hover{background:rgba(0,180,216,.02)}
+.mstep-num{
+  font-family:var(--display);font-size:2.6rem;font-weight:800;
+  color:rgba(0,180,216,.12);line-height:1;text-align:right;
+  padding-top:2px;
+}
+.mstep-body h3{font-family:var(--display);font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.mstep-body p{font-size:13.5px;color:var(--muted);margin-bottom:.9rem;line-height:1.65}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{
+  font-family:var(--mono);font-size:10.5px;
+  padding:3px 10px;border-radius:4px;
+  background:rgba(0,180,216,.08);color:var(--blue);
+  border:1px solid rgba(0,180,216,.15);
+}
+.tag.t{background:rgba(0,245,196,.07);color:var(--teal);border-color:rgba(0,245,196,.15)}
+.tag.i{background:rgba(79,142,247,.07);color:var(--indigo);border-color:rgba(79,142,247,.15)}
+.tag.o{background:rgba(255,107,53,.07);color:var(--orange);border-color:rgba(255,107,53,.15)}
+.model-compare{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;
+  margin-top:2.5rem;
+}
+.mc{
+  border:1px solid var(--border);border-radius:var(--r2);
+  padding:1.5rem 1.6rem;background:var(--bg2);
+}
+.mc-head{font-family:var(--mono);font-size:10.5px;color:var(--blue);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.8rem}
+.mc h4{font-family:var(--display);font-size:1rem;font-weight:700;margin-bottom:.7rem}
+.mc ul{list-style:none;display:flex;flex-direction:column;gap:.35rem}
+.mc li{font-size:12.5px;color:var(--muted)}
+.mc li::before{content:'✓ ';color:var(--teal)}
+
+/* alerts section */
+.alert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem;margin-top:1.5rem}
+.alert-card{
+  border:1px solid rgba(255,107,53,.2);
+  border-radius:var(--r);
+  padding:1rem 1.2rem;
+  background:rgba(255,107,53,.04);
+  font-size:13.5px;
+}
+.alert-card span{font-size:1.1rem;margin-right:.4rem}
+
+/* ── TECH STACK ── */
+.tech-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;
+}
+.tech-cell{background:var(--bg2);padding:1.3rem 1.5rem;transition:background .2s}
+.tech-cell:hover{background:var(--surface2)}
+.tc-role{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem}
+.tc-name{font-family:var(--display);font-size:.95rem;font-weight:700}
+.tc-sub{font-size:12px;color:var(--muted);margin-top:.15rem}
+
+/* ── ARCH FLOW ── */
+.arch{
+  display:flex;flex-direction:column;align-items:center;gap:0;
+  padding:2rem;
+  border:1px solid var(--border);border-radius:var(--r2);
+  background:var(--bg2);
+  overflow:hidden;
+}
+.arch-row{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+}
+.arch-node{
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:.7rem 1.2rem;background:var(--bg);
+  font-size:13px;font-family:var(--mono);color:var(--muted);
+  text-align:center;
+  transition:border-color .2s;
+}
+.arch-node.blue{border-color:rgba(0,180,216,.3);color:var(--blue)}
+.arch-node.teal{border-color:rgba(0,245,196,.3);color:var(--teal)}
+.arch-node.indigo{border-color:rgba(79,142,247,.3);color:var(--indigo)}
+.arch-node.orange{border-color:rgba(255,107,53,.3);color:var(--orange)}
+.arch-down{
+  color:var(--blue);font-size:1.1rem;padding:.3rem;
+  opacity:.5;
+}
+.arch-label{
+  font-family:var(--mono);font-size:10px;color:var(--dim);
+  letter-spacing:.1em;text-transform:uppercase;
+  margin:1rem 0 .5rem;
+}
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+footer{
+  padding:2.5rem clamp(1.5rem,5vw,5rem);
+  border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;
+}
+footer p{font-size:12px;color:var(--dim)}
+.f-stack{font-family:var(--mono);font-size:11px;color:var(--blue)}
+
+/* ══════════════════════════════
+   REVEAL
+══════════════════════════════ */
+.r{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.r.in{opacity:1;transform:none}
+.r2{opacity:0;transform:translateY(20px);transition:opacity .6s .1s ease,transform .6s .1s ease}
+.r2.in{opacity:1;transform:none}
+.r3{opacity:0;transform:translateY(20px);transition:opacity .6s .2s ease,transform .6s .2s ease}
+.r3.in{opacity:1;transform:none}
+
+/* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:5rem}
+  .hero-right{display:none}
+  .vs-grid{grid-template-columns:1fr}
+  .model-compare{grid-template-columns:1fr}
+  .problem-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .nav-links{display:none}
+  .hero h1{font-size:2.4rem}
+  .mstep{grid-template-columns:48px 1fr;gap:.8rem}
+  .mstep-num{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-dot"></div>
+    Water AI — Project Report
+  </div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#literature">Literature</a></li>
+    <li><a href="#gaps">Gaps</a></li>
+    <li><a href="#novelty">Novelty</a></li>
+    <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#methodology">Methodology</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ══ -->
+<header class="hero">
+  <div class="hero-left">
+    <p class="eyebrow">Final Year Project · Academic Report · 2025</p>
+    <h1>AI-Based<br/><span class="hl">Smart Water</span><br/>Resource<br/>Allocation</h1>
+    <p class="hero-desc">An end-to-end intelligent platform combining deep learning, machine learning, optimization, and real-time APIs to forecast water demand, predict drought risk, and allocate resources across sectors.</p>
+    <div class="hero-pills">
+      <span class="pill blue">LSTM · Deep Learning</span>
+      <span class="pill blue">XGBoost Classifier</span>
+      <span class="pill teal">PuLP Optimization</span>
+      <span class="pill indigo">React 19 · Vite · shadcn/ui</span>
+      <span class="pill orange">Flask · PostgreSQL</span>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="num">5</div><div class="lbl">Papers Surveyed</div></div>
+      <div class="stat"><div class="num">4</div><div class="lbl">Datasets</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">AI Models</div></div>
+      <div class="stat"><div class="num">8</div><div class="lbl">Pipeline Steps</div></div>
+    </div>
+  </div>
+
+  <!-- FLOW DIAGRAM -->
+  <div class="hero-right">
+    <div class="flow-card">
+      <div class="flow-label">Data Sources</div>
+      <div class="flow-title">Multi-Source Input</div>
+      <div class="flow-badges">
+        <span class="fb">🌧️ Rainfall</span>
+        <span class="fb">🌡️ Weather API</span>
+        <span class="fb">🏞️ Reservoir</span>
+        <span class="fb">👥 Population</span>
+        <span class="fb">💧 Consumption</span>
+      </div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-card">
+      <div class="flow-label">Processing</div>
+      <div class="flow-title">Data Preprocessing + Feature Engineering</div>
+      <div class="flow-badges">
+        <span class="fb">Pandas</span><span class="fb">NumPy</span><span class="fb t">Normalization</span><span class="fb t">Seasonal Flags</span>
+      </div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-card">
+      <div class="flow-label">Deep Learning</div>
+      <div class="flow-title">LSTM — Water Demand Forecasting</div>
+      <div class="flow-sub">Learns long-term time-series dependencies</div>
+      <div class="flow-badges"><span class="fb">TensorFlow / Keras</span><span class="fb t">Future Demand →</span></div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-card">
+      <div class="flow-label">Machine Learning</div>
+      <div class="flow-title">XGBoost — Drought Risk Prediction</div>
+      <div class="flow-sub">Classifies: Low / Medium / High risk</div>
+      <div class="flow-badges"><span class="fb i">Low Risk</span><span class="fb o">Med Risk</span><span class="fb" style="background:rgba(255,60,60,.1);color:#ff5555;border-color:rgba(255,60,60,.2)">High Risk</span></div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-card">
+      <div class="flow-label">Optimization</div>
+      <div class="flow-title">PuLP — Smart Allocation Engine</div>
+      <div class="flow-sub">Linear programming for optimal distribution</div>
+      <div class="flow-badges">
+        <span class="fb">🏠 Domestic P1</span>
+        <span class="fb t">🌾 Agriculture P2</span>
+        <span class="fb i">🏭 Industry P3</span>
+      </div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-card">
+      <div class="flow-label">Output</div>
+      <div class="flow-title">React 19 Dashboard + Alerts</div>
+      <div class="flow-badges"><span class="fb t">shadcn/ui</span><span class="fb t">Recharts</span><span class="fb">Tailwind v4</span><span class="fb o">⚠ Alerts</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ SECTION 1: PROBLEM ══ -->
+<section id="problem">
+  <p class="sec-label r">01 — Problem Statement</p>
+  <h2 class="sec-title r">Why existing systems fail</h2>
+  <p class="sec-sub r2">Water is essential — but management today is reactive, siloed, and unable to anticipate the crises of tomorrow.</p>
+
+  <div class="problem-grid r">
+    <div class="p-card">
+      <span class="p-tag">Background</span>
+      <h3>The Global Water Crisis</h3>
+      <ul>
+        <li>Rapid population growth increases water demand yearly</li>
+        <li>Climate change disrupts rainfall patterns unpredictably</li>
+        <li>Urbanization accelerates reservoir depletion</li>
+        <li>Decisions rely on historical data, not predictive intelligence</li>
+        <li>No early warning systems for drought conditions exist</li>
+      </ul>
+    </div>
+    <div class="p-card">
+      <span class="p-tag orange">Core Problems</span>
+      <h3>What Existing Systems Cannot Do</h3>
+      <ul>
+        <li>Predict future water demand accurately</li>
+        <li>Anticipate drought conditions early enough</li>
+        <li>Dynamically optimize water allocation in real time</li>
+        <li>Integrate multiple data sources into one platform</li>
+        <li>Generate automated alerts for critical thresholds</li>
+      </ul>
+    </div>
+    <div class="p-card">
+      <span class="p-tag teal">Objective</span>
+      <h3>What This Platform Achieves</h3>
+      <ul>
+        <li>Forecast future water demand using LSTM deep learning</li>
+        <li>Predict drought risk levels via XGBoost classification</li>
+        <li>Optimize sector-wise allocation using PuLP Linear Programming</li>
+        <li>Generate intelligent threshold alerts automatically</li>
+        <li>Provide a real-time React dashboard for decision-makers</li>
+      </ul>
+    </div>
+    <div class="p-card">
+      <span class="p-tag">Expected Outcome</span>
+      <h3>Impact for Water Authorities</h3>
+      <ul>
+        <li>Accurate multi-step water demand forecasting</li>
+        <li>Early drought detection before crises occur</li>
+        <li>Optimal, mathematically justified sector allocation</li>
+        <li>Significant reduction in water wastage</li>
+        <li>A decision-support tool accessible to non-experts</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="r3" style="overflow-x:auto;margin-top:1rem">
+    <table class="p-table">
+      <thead><tr><th>Challenge</th><th>Root Cause</th><th>Impact</th></tr></thead>
+      <tbody>
+        <tr><td><strong>No demand forecasting</strong> — systems react after shortage, not before</td><td>Lack of predictive ML/DL models</td><td><span class="badge b-crit">Critical</span></td></tr>
+        <tr><td><strong>No drought early warning</strong> — alerts come too late for intervention</td><td>No classification models on environmental data</td><td><span class="badge b-crit">Critical</span></td></tr>
+        <tr><td><strong>Uneven sector distribution</strong> — agriculture vs domestic competition</td><td>No priority-based optimization engine</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td><strong>Siloed datasets</strong> — weather, reservoir, population studied separately</td><td>No unified data pipeline</td><td><span class="badge b-high">High</span></td></tr>
+        <tr><td><strong>No web-based decision support</strong> — results stay in Jupyter notebooks</td><td>No full-stack deployment</td><td><span class="badge b-med">Medium</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ SECTION 2: LITERATURE ══ -->
+<section id="literature">
+  <p class="sec-label r">02 — Literature Survey</p>
+  <h2 class="sec-title r">5 papers studied and understood</h2>
+  <p class="sec-sub r2">Spanning demand forecasting, IoT monitoring, drought prediction, reservoir optimization, and decision-support systems.</p>
+
+  <div class="paper-grid r">
+    <div class="paper">
+      <div class="paper-num">PAPER 01</div>
+      <h3>ML Approaches for Water Demand Forecasting</h3>
+      <p class="meta">Smith et al. · 2021</p>
+      <ul>
+        <li>Compared Linear Regression, Random Forest, and ANN</li>
+        <li>ML outperforms traditional statistical methods</li>
+        <li>Validated RF accuracy for non-linear demand patterns</li>
+      </ul>
+      <p class="limit"><strong>Limitation:</strong> Focused only on domestic water — no sector-wise allocation or drought prediction component.</p>
+    </div>
+    <div class="paper">
+      <div class="paper-num">PAPER 02</div>
+      <h3>Smart Water Management Using IoT and AI</h3>
+      <p class="meta">Kumar & Rao · 2022</p>
+      <ul>
+        <li>Integrated IoT sensors with AI for real-time monitoring</li>
+        <li>Reduced leakage and wastage through smart tracking</li>
+        <li>Validated AI usefulness in live water distribution</li>
+      </ul>
+      <p class="limit"><strong>Limitation:</strong> No future demand forecasting. No intelligent allocation recommendations whatsoever.</p>
+    </div>
+    <div class="paper">
+      <div class="paper-num">PAPER 03</div>
+      <h3>Rainfall Prediction & Drought Assessment Using XGBoost</h3>
+      <p class="meta">Chen et al. · 2020</p>
+      <ul>
+        <li>XGBoost for environmental classification tasks</li>
+        <li>Achieved high accuracy in rainfall and drought prediction</li>
+        <li>Directly validates our XGBoost drought risk module</li>
+      </ul>
+      <p class="limit"><strong>Limitation:</strong> Drought prediction only — did not address water demand forecasting or allocation.</p>
+    </div>
+    <div class="paper">
+      <div class="paper-num">PAPER 04</div>
+      <h3>Optimization Techniques for Reservoir Water Allocation</h3>
+      <p class="meta">Patel & Singh · 2019</p>
+      <ul>
+        <li>Mathematical optimization for reservoir operation</li>
+        <li>Introduced sector-priority-based allocation strategies</li>
+        <li>Foundational logic for our PuLP allocation engine</li>
+      </ul>
+      <p class="limit"><strong>Limitation:</strong> Static allocation rules with no ML prediction — cannot adapt to future demand.</p>
+    </div>
+    <div class="paper" style="grid-column:1/-1">
+      <div class="paper-num">PAPER 05 · Most Relevant</div>
+      <h3>AI Decision Support Systems for Sustainable Water Management</h3>
+      <p class="meta">Lee et al. · 2023</p>
+      <ul>
+        <li>Combined ML with visualization dashboards for planning</li>
+        <li>Enhanced long-term decision-making for water authorities</li>
+        <li>Closest in vision — directly informs our dashboard design</li>
+      </ul>
+      <p class="limit"><strong>Limitation:</strong> Did not integrate weather + reservoir + population + consumption data together. No end-to-end allocation system — exactly the gap this project fills.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 3: GAPS ══ -->
+<section id="gaps">
+  <p class="sec-label r">03 — Gap Identification</p>
+  <h2 class="sec-title r">What is missing across all existing work</h2>
+  <p class="sec-sub r2">Seven structural gaps identified — not minor details, but fundamental design failures in every surveyed system.</p>
+
+  <div class="r2" style="overflow-x:auto">
+    <table class="gap-table">
+      <thead>
+        <tr><th>#</th><th>Identified Gap</th><th>Papers Affected</th><th>Impact</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="gap-num">G-01</td>
+          <td><strong>Single-source datasets used independently</strong> — no combined multi-source analytical pipeline exists</td>
+          <td>P1, P2, P5</td>
+          <td><span class="badge b-high">High</span></td>
+        </tr>
+        <tr>
+          <td class="gap-num">G-02</td>
+          <td><strong>No combined demand forecasting + drought prediction</strong> — each studied in isolation</td>
+          <td>P1, P3</td>
+          <td><span class="badge b-high">High</span></td>
+        </tr>
+        <tr>
+          <td class="gap-num">G-03</td>
+          <td><strong>No intelligent allocation recommendations</strong> — predictions exist but no actionable output follows</td>
+          <td>P1, P2, P3</td>
+          <td><span class="badge b-crit">Critical</span></td>
+        </tr>
+        <tr>
+          <td class="gap-num">G-04</td>
+          <td><strong>Static allocation strategies</strong> — fixed rules that cannot adapt to predicted future demand</td>
+          <td>P4, P5</td>
+          <td><span class="badge b-high">High</span></td>
+        </tr>
+        <tr>
+          <td class="gap-num">G-05</td>
+          <td><strong>No real-time weather API integration</strong> — systems rely on offline historical data only</td>
+          <td>All 5 Papers</td>
+          <td><span class="badge b-high">High</span></td>
+        </tr>
+        <tr>
+          <td class="gap-num">G-06</td>
+          <td><strong>Limited decision-support dashboards</strong> — no interactive web UI for non-technical authorities</td>
+          <td>P1, P3, P4</td>
+          <td><span class="badge b-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td class="gap-num">G-07</td>
+          <td><strong>Lack of multi-sector optimization</strong> — simultaneous Domestic + Agriculture + Industry balancing is unexplored</td>
+          <td>P1, P2, P3</td>
+          <td><span class="badge b-crit">Critical</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ SECTION 4: NOVELTY ══ -->
+<section id="novelty">
+  <p class="sec-label r">04 — Novelty</p>
+  <h2 class="sec-title r">What makes this project unique</h2>
+  <p class="sec-sub r2">The novelty lies in integrating forecasting, classification, optimization, and visualization into one complete platform — something no existing paper achieves.</p>
+
+  <div class="vs-grid r">
+    <div class="vs-box bad">
+      <div class="vs-head">✗ Existing Systems</div>
+      <ul class="vs-list">
+        <li>Demand forecasting only, or drought monitoring only</li>
+        <li>Static rule-based allocation — no ML adaptation</li>
+        <li>No real-time weather API integration</li>
+        <li>No drought-aware allocation decisions</li>
+        <li>Separate offline tools for monitoring and planning</li>
+        <li>Academic scripts — no deployed web interface</li>
+      </ul>
+    </div>
+    <div class="vs-box good">
+      <div class="vs-head">✓ This Platform</div>
+      <ul class="vs-list">
+        <li>LSTM demand forecasting + XGBoost drought prediction combined</li>
+        <li>PuLP optimization engine adapts to predicted demand + drought risk</li>
+        <li>OpenWeatherMap API feeds live climatic data</li>
+        <li>Allocation decisions influenced by real-time drought risk</li>
+        <li>Automated alert generation for critical thresholds</li>
+        <li>Full-stack React 19 + Flask + PostgreSQL web deployment</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="contrib-grid r2">
+    <div class="contrib">
+      <div class="contrib-icon">🔗</div>
+      <h4>Multi-Source Data Integration</h4>
+      <p>Combines Weather, Reservoir, Population, and Consumption data into a unified preprocessing pipeline.</p>
+    </div>
+    <div class="contrib">
+      <div class="contrib-icon">🧠</div>
+      <h4>AI-Powered Deep Learning</h4>
+      <p>LSTM learns long-term temporal dependencies in water demand — far beyond what regression can model.</p>
+    </div>
+    <div class="contrib">
+      <div class="contrib-icon">☁️</div>
+      <h4>Drought-Aware Decision Making</h4>
+      <p>Allocation engine is aware of drought risk level — tightens distribution automatically in high-risk periods.</p>
+    </div>
+    <div class="contrib">
+      <div class="contrib-icon">⚖️</div>
+      <h4>Mathematical Optimization</h4>
+      <p>PuLP Linear Programming guarantees mathematically optimal water distribution — not just heuristic rules.</p>
+    </div>
+    <div class="contrib">
+      <div class="contrib-icon">⚠️</div>
+      <h4>Automated Alert System</h4>
+      <p>Automatically flags high drought risk, low reservoir levels, and demand-supply imbalances in real time.</p>
+    </div>
+    <div class="contrib">
+      <div class="contrib-icon">🌐</div>
+      <h4>End-to-End Full-Stack</h4>
+      <p>From raw CSV data to a deployed React 19 dashboard — every layer built and integrated in one system.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 5: DATASET ══ -->
+<section id="dataset">
+  <p class="sec-label r">05 — Dataset</p>
+  <h2 class="sec-title r">Identified · Collected · Understood</h2>
+  <p class="sec-sub r2">Four datasets, each mapped to specific model inputs. All publicly available or accessible via API.</p>
+
+  <div class="ds-grid r">
+    <div class="ds">
+      <div class="ds-bg">💧</div>
+      <div class="ds-id">Dataset 01 — Primary</div>
+      <h3>Water Consumption Dataset</h3>
+      <p class="ds-source">Municipal Water Boards · Government Reports</p>
+      <ul class="ds-feats">
+        <li>Date / Timestamp</li>
+        <li>Region / Area</li>
+        <li>Domestic, Agricultural, Industrial Usage</li>
+        <li>Total Water Consumption</li>
+      </ul>
+      <p class="ds-purpose">→ Used for: <strong>LSTM Water Demand Forecasting</strong></p>
+    </div>
+    <div class="ds">
+      <div class="ds-bg">🌡️</div>
+      <div class="ds-id">Dataset 02 — API + Historical</div>
+      <h3>Weather Dataset</h3>
+      <p class="ds-source">OpenWeatherMap API · Historical weather archives</p>
+      <ul class="ds-feats">
+        <li>Temperature & Humidity</li>
+        <li>Rainfall & Wind Speed</li>
+        <li>Atmospheric Pressure</li>
+      </ul>
+      <p class="ds-purpose">→ Used for: <strong>Demand Forecasting + Drought Prediction</strong></p>
+    </div>
+    <div class="ds">
+      <div class="ds-bg">🏞️</div>
+      <div class="ds-id">Dataset 03 — Structural</div>
+      <h3>Reservoir Dataset</h3>
+      <p class="ds-source">State Irrigation Departments · Public databases</p>
+      <ul class="ds-feats">
+        <li>Reservoir Name & Location</li>
+        <li>Current Water Level</li>
+        <li>Storage Capacity</li>
+        <li>Inflow & Outflow Rates</li>
+      </ul>
+      <p class="ds-purpose">→ Used for: <strong>Drought Prediction + Water Allocation</strong></p>
+    </div>
+    <div class="ds">
+      <div class="ds-bg">👥</div>
+      <div class="ds-id">Dataset 04 — Demographic</div>
+      <h3>Population Dataset</h3>
+      <p class="ds-source">Census Reports · Government Demographic Data</p>
+      <ul class="ds-feats">
+        <li>Regional Population</li>
+        <li>Annual Growth Rate</li>
+        <li>Urbanization Index</li>
+      </ul>
+      <p class="ds-purpose">→ Used for: <strong>LSTM Demand Forecasting (population pressure)</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 6: METHODOLOGY ══ -->
+<section id="methodology">
+  <p class="sec-label r">06 — Proposed Methodology</p>
+  <h2 class="sec-title r">Workflow Diagram — Proposed Solution</h2>
+  <p class="sec-sub r2">End-to-end pipeline combining deep learning, classification, and optimization — from raw data to water authorities.</p>
+
+  <!-- ════════════════════════════════════
+       VISUAL WORKFLOW DIAGRAM
+  ════════════════════════════════════ -->
+  <div class="wf r" style="display:flex;flex-direction:column;align-items:center;gap:0;max-width:860px;margin:0 auto;">
+
+    <!-- ── LAYER 1: DATA SOURCES ── -->
+    <div class="wf-slabel">1 · Data Sources</div>
+    <div class="wf-block wf-sources">
+      <div class="wf-src-grid">
+        <div class="wf-src">
+          <div class="wf-src-icon">💧</div>
+          <div class="wf-src-title">Water Usage</div>
+          <div class="wf-src-sub">Consumption Data</div>
+        </div>
+        <div class="wf-src">
+          <div class="wf-src-icon">🌦️</div>
+          <div class="wf-src-title">Weather Data</div>
+          <div class="wf-src-sub">API &amp; Historical</div>
+        </div>
+        <div class="wf-src">
+          <div class="wf-src-icon">🏞️</div>
+          <div class="wf-src-title">Reservoir Data</div>
+          <div class="wf-src-sub">Water Level &amp; Storage</div>
+        </div>
+        <div class="wf-src">
+          <div class="wf-src-icon">👥</div>
+          <div class="wf-src-title">Population Data</div>
+          <div class="wf-src-sub">Census Data</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- arrow -->
+    <div class="wf-arrow-down"></div>
+
+    <!-- ── LAYER 2: DATA PIPELINE ── -->
+    <div class="wf-slabel">2 · Data Pipeline</div>
+    <div class="wf-block wf-pipeline">
+      <div class="wf-pipe-step">
+        <div class="wf-ps-icon">📥</div>
+        <div>
+          <div class="wf-ps-title">Data Collection</div>
+          <div class="wf-ps-sub">OpenWeatherMap API · IMD · State Irrigation Depts · Census Reports</div>
+        </div>
+      </div>
+      <div class="wf-pipe-arrow"></div>
+      <div class="wf-pipe-step">
+        <div class="wf-ps-icon">🧹</div>
+        <div>
+          <div class="wf-ps-title">Data Preprocessing</div>
+          <div class="wf-ps-sub">Missing value handling · Outlier removal (IQR) · Min-Max normalization · Duplicate removal</div>
+        </div>
+      </div>
+      <div class="wf-pipe-arrow"></div>
+      <div class="wf-pipe-step">
+        <div class="wf-ps-icon">⚗️</div>
+        <div>
+          <div class="wf-ps-title">Feature Engineering</div>
+          <div class="wf-ps-sub">Seasonal features · Reservoir utilization % · Population growth trends · Per-capita demand</div>
+        </div>
+      </div>
+      <div class="wf-pipe-arrow"></div>
+      <div class="wf-db-node">🗄️ &nbsp; Processed Dataset — unified time-series (date + region aligned)</div>
+    </div>
+
+    <!-- split arrow -->
+    <div class="wf-split-wrap">
+      <div class="wf-split-bar"></div>
+      <div class="wf-split-left-line"></div>
+      <div class="wf-split-right-line"></div>
+    </div>
+
+    <!-- ── LAYER 3: AI MODELS ── -->
+    <div class="wf-slabel">3 · AI Models</div>
+    <div class="wf-models-row">
+
+      <div class="wf-model wf-lstm">
+        <div class="wf-model-accent"></div>
+        <div class="wf-model-tag">🧠 Deep Learning · Step 04</div>
+        <div class="wf-model-title">LSTM Model</div>
+        <div class="wf-model-desc">Water Demand Forecasting — learns long-term temporal dependencies in seasonal water demand patterns</div>
+        <div class="wf-io-label">Inputs</div>
+        <div class="wf-chips">
+          <span class="wf-chip wf-chip-blue">Historical Demand</span>
+          <span class="wf-chip wf-chip-blue">Rainfall</span>
+          <span class="wf-chip wf-chip-blue">Temperature</span>
+          <span class="wf-chip wf-chip-blue">Humidity</span>
+          <span class="wf-chip wf-chip-blue">Population</span>
+          <span class="wf-chip wf-chip-blue">Reservoir Level</span>
+        </div>
+        <div class="wf-output wf-output-blue">📈 &nbsp; Output: Future Water Demand</div>
+      </div>
+
+      <div class="wf-model wf-xgb">
+        <div class="wf-model-accent"></div>
+        <div class="wf-model-tag">⚡ Machine Learning · Step 05</div>
+        <div class="wf-model-title">XGBoost Classifier</div>
+        <div class="wf-model-desc">Drought Risk Prediction — classifies environmental conditions into actionable risk categories</div>
+        <div class="wf-io-label">Inputs</div>
+        <div class="wf-chips">
+          <span class="wf-chip wf-chip-orange">Rainfall</span>
+          <span class="wf-chip wf-chip-orange">Temperature</span>
+          <span class="wf-chip wf-chip-orange">Humidity</span>
+          <span class="wf-chip wf-chip-orange">Reservoir Level</span>
+        </div>
+        <div class="wf-output wf-output-orange">🎯 &nbsp; Output: Drought Risk Level</div>
+        <div class="wf-risk-row">
+          <span class="wf-risk wf-risk-lo">Low</span>
+          <span class="wf-risk wf-risk-med">Medium</span>
+          <span class="wf-risk wf-risk-hi">High</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- merge arrow -->
+    <div class="wf-merge-wrap">
+      <div class="wf-merge-left-line"></div>
+      <div class="wf-merge-right-line"></div>
+      <div class="wf-merge-bar"></div>
+    </div>
+    <div class="wf-arrow-down"></div>
+
+    <!-- ── LAYER 4: OPTIMIZATION ENGINE ── -->
+    <div class="wf-slabel">4 · Optimization Engine</div>
+    <div class="wf-block wf-opt">
+      <div class="wf-opt-inner">
+        <!-- inputs col -->
+        <div class="wf-opt-col">
+          <div class="wf-opt-col-label">Inputs</div>
+          <div class="wf-opt-inputs">
+            <div class="wf-opt-input">📈 Predicted Water Demand</div>
+            <div class="wf-opt-input">🎯 Drought Risk Level</div>
+            <div class="wf-opt-input">🏞️ Available Reservoir Water</div>
+            <div class="wf-opt-input">⚙️ Sector Priority Weights</div>
+          </div>
+        </div>
+        <!-- arrows in -->
+        <div class="wf-opt-arrow">→</div>
+        <!-- engine -->
+        <div class="wf-engine">
+          <div class="wf-engine-icon">⚖️</div>
+          <div class="wf-engine-title">PuLP Linear<br/>Programming</div>
+          <div class="wf-engine-sub">Smart Water Allocation</div>
+          <div class="wf-engine-note">Maximize efficiency<br/>subject to constraints</div>
+        </div>
+        <!-- arrows out -->
+        <div class="wf-opt-arrow">→</div>
+        <!-- outputs col -->
+        <div class="wf-opt-col">
+          <div class="wf-opt-col-label">Optimal Allocation</div>
+          <div class="wf-opt-outputs">
+            <div class="wf-alloc wf-alloc-p1">🏠 Domestic Allocation <span class="wf-p">P1</span></div>
+            <div class="wf-alloc wf-alloc-p2">🌾 Agriculture Allocation <span class="wf-p">P2</span></div>
+            <div class="wf-alloc wf-alloc-p3">🏭 Industrial Allocation <span class="wf-p">P3</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- split to 3 outputs -->
+    <div class="wf-split3-wrap">
+      <div class="wf-split3-bar"></div>
+      <div class="wf-split3-lines">
+        <div class="wf-split3-line"></div>
+        <div class="wf-split3-line wf-split3-center"></div>
+        <div class="wf-split3-line"></div>
+      </div>
+    </div>
+
+    <!-- ── LAYER 5: OUTPUT & DECISION SUPPORT ── -->
+    <div class="wf-slabel">5 · Output &amp; Decision Support</div>
+    <div class="wf-block wf-output-block">
+      <div class="wf-out-row">
+        <div class="wf-out-card">
+          <div class="wf-out-icon">🔔</div>
+          <div class="wf-out-title" style="color:var(--orange)">Smart Alerts</div>
+          <div class="wf-out-sub">Auto threshold-based warnings</div>
+        </div>
+        <div class="wf-out-card">
+          <div class="wf-out-icon">📊</div>
+          <div class="wf-out-title" style="color:var(--blue)">React Dashboard</div>
+          <div class="wf-out-sub">React 19 · Vite · shadcn/ui · Recharts</div>
+        </div>
+        <div class="wf-out-card">
+          <div class="wf-out-icon">📄</div>
+          <div class="wf-out-title" style="color:var(--indigo)">Reports &amp; Analytics</div>
+          <div class="wf-out-sub">Exportable allocation plans</div>
+        </div>
+      </div>
+      <!-- alert examples -->
+      <div class="wf-alerts">
+        <div class="wf-alert">⚠️ High Drought Risk</div>
+        <div class="wf-alert">⚠️ Reservoir Below 30%</div>
+        <div class="wf-alert">⚠️ Demand Exceeds Supply</div>
+        <div class="wf-alert">💧 Conservation Advised</div>
+      </div>
+    </div>
+
+    <!-- final arrow -->
+    <div class="wf-arrow-down"></div>
+
+    <!-- ── FINAL NODE ── -->
+    <div class="wf-final">
+      <div class="wf-final-icon">🏛️</div>
+      <div class="wf-final-title">Water Management Authorities</div>
+      <div class="wf-final-sub">Actionable insights · Better decisions · Sustainable water resource management</div>
+    </div>
+
+    <!-- deployment strip -->
+    <div class="wf-deploy">
+      <div class="wf-deploy-label">Deployment Stack</div>
+      <div class="wf-deploy-chips">
+        <span class="wf-chip wf-chip-blue">⚛️ React 19 + Vite</span>
+        <span class="wf-chip wf-chip-blue">🎨 Tailwind CSS v4</span>
+        <span class="wf-chip wf-chip-blue">🧩 shadcn/ui</span>
+        <span class="wf-chip wf-chip-teal">📈 Recharts</span>
+        <span class="wf-chip wf-chip-indigo">🐍 Flask + Flask-CORS</span>
+        <span class="wf-chip wf-chip-indigo">🐘 PostgreSQL + SQLAlchemy</span>
+        <span class="wf-chip wf-chip-teal">☁️ Vercel</span>
+        <span class="wf-chip wf-chip-indigo">🔧 Postman · pgAdmin 4</span>
+      </div>
+    </div>
+
+  </div><!-- end .wf -->
+
+  <!-- MODEL JUSTIFICATION CARDS -->
+  <h3 class="r" style="font-family:var(--display);font-size:1.3rem;font-weight:800;margin:3.5rem 0 1.2rem;letter-spacing:-.02em">Why these three models?</h3>
+  <div class="model-compare r2">
+    <div class="mc">
+      <div class="mc-head">Step 04 · Deep Learning</div>
+      <h4>🧠 LSTM</h4>
+      <ul>
+        <li>Water demand is inherently time-series</li>
+        <li>Captures long-term seasonal patterns</li>
+        <li>Learns multi-variable temporal dependencies</li>
+        <li>Outperforms regression on sequential data</li>
+        <li>Handles variable-length input sequences</li>
+      </ul>
+    </div>
+    <div class="mc">
+      <div class="mc-head">Step 05 · Classification</div>
+      <h4>⚡ XGBoost</h4>
+      <ul>
+        <li>Drought risk is a classification task</li>
+        <li>Best-in-class on tabular environmental data</li>
+        <li>Built-in handling for class imbalance</li>
+        <li>Fast, scalable gradient boosting</li>
+        <li>Interpretable feature importance scores</li>
+      </ul>
+    </div>
+    <div class="mc">
+      <div class="mc-head">Step 06 · Optimization</div>
+      <h4>⚖️ PuLP (LP)</h4>
+      <ul>
+        <li>Allocation is an optimization, not prediction</li>
+        <li>Mathematically guaranteed optimal output</li>
+        <li>Easily encodes priority constraints</li>
+        <li>Integrates drought risk as a constraint</li>
+        <li>Transparent and auditable solution</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TECH STACK TABLE -->
+  <h3 class="r" style="font-family:var(--display);font-size:1.3rem;font-weight:800;margin:3.5rem 0 1.2rem;letter-spacing:-.02em">Complete Technology Stack</h3>
+  <div class="tech-grid r2">
+    <div class="tech-cell"><div class="tc-role">Frontend</div><div class="tc-name">React 19</div><div class="tc-sub">Vite build tool</div></div>
+    <div class="tech-cell"><div class="tc-role">Styling</div><div class="tc-name">Tailwind v4</div><div class="tc-sub">shadcn/ui components</div></div>
+    <div class="tech-cell"><div class="tc-role">Charts</div><div class="tc-name">Recharts</div><div class="tc-sub">Interactive visualizations</div></div>
+    <div class="tech-cell"><div class="tc-role">Backend</div><div class="tc-name">Flask</div><div class="tc-sub">Flask-CORS · REST API</div></div>
+    <div class="tech-cell"><div class="tc-role">Database</div><div class="tc-name">PostgreSQL</div><div class="tc-sub">SQLAlchemy ORM</div></div>
+    <div class="tech-cell"><div class="tc-role">DB Driver</div><div class="tc-name">psycopg2</div><div class="tc-sub">psycopg2-binary</div></div>
+    <div class="tech-cell"><div class="tc-role">Deep Learning</div><div class="tc-name">LSTM</div><div class="tc-sub">TensorFlow / Keras</div></div>
+    <div class="tech-cell"><div class="tc-role">ML Model</div><div class="tc-name">XGBoost</div><div class="tc-sub">Scikit-Learn pipeline</div></div>
+    <div class="tech-cell"><div class="tc-role">Optimization</div><div class="tc-name">PuLP</div><div class="tc-sub">Linear Programming</div></div>
+    <div class="tech-cell"><div class="tc-role">Data</div><div class="tc-name">Pandas · NumPy</div><div class="tc-sub">Data processing</div></div>
+    <div class="tech-cell"><div class="tc-role">EDA / Viz</div><div class="tc-name">Matplotlib</div><div class="tc-sub">Seaborn · notebooks</div></div>
+    <div class="tech-cell"><div class="tc-role">Dev Tools</div><div class="tc-name">VS Code</div><div class="tc-sub">Jupyter · Postman · pgAdmin 4</div></div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <p>AI-Based Smart Water Resource Allocation Platform · Final Year Project Report · 2025</p>
+  <span class="f-stack">LSTM · XGBoost · PuLP · React 19 · Flask · PostgreSQL</span>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:0.07});
+document.querySelectorAll('.r,.r2,.r3').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
